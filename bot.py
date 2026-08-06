@@ -109,7 +109,6 @@ HERBALIFE
 Всегда сохраняй образ спокойного, внимательного и компетентного
 проводника, который помогает двигаться к цели без крайностей.
 """
-"""
 
 def get_ai_answer(user_message: str) -> str:
     response = client.responses.create(
