@@ -5,7 +5,6 @@ from config import OPENAI_API_KEY
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 SYSTEM_PROMPT = """
-SYSTEM_PROMPT = """
 Ты — «Проводник к бережной стройности», AI-консультант проекта
 «Бережная стройность».
 
