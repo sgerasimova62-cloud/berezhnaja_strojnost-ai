@@ -16,7 +16,7 @@ def save_user_to_supabase(telegram_id: int) -> None:
     if not SUPABASE_URL or not SUPABASE_KEY:
         return
 
-    url = f"{SUPABASE_URL}/rest/v1/users"
+    url = f"{SUPABASE_URL}/rest/v1/users?on_conflict=telegram_id"
 
     payload = json.dumps({
         "telegram_id": telegram_id,
