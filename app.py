@@ -263,7 +263,7 @@ def telegram_webhook():
             "one_time_keyboard": False,
         }
         
-        elif normalized_text == "📝 начать персональный разбор":
+    elif normalized_text == "📝 начать персональный разбор":
     save_user_to_supabase(chat_id)
 
     update_user_in_supabase(
