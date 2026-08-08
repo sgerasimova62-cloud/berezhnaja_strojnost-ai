@@ -8,8 +8,34 @@ from flask import Flask, request
 from config import TELEGRAM_TOKEN
 from bot import get_ai_answer
 
-app = Flask(__name__)
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+app = Flask(__name__)
+def save_user_to_supabase(telegram_id: int) -> None:
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        return
+
+    url = f"{SUPABASE_URL}/rest/v1/users"
+
+    payload = json.dumps({
+        "telegram_id": telegram_id,
+        "stage": 0,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        method="POST",
+        headers={
+            "apikey": SUPABASE_KEY,
+            "Content-Type": "application/json",
+            "Prefer": "resolution=ignore-duplicates",
+        },
+    )
+
+    with urllib.request.urlopen(req, timeout=20):
+        pass
 
 def send_telegram_message(
     chat_id: int,
@@ -90,6 +116,8 @@ def telegram_webhook():
         }
 
     elif normalized_text == "📝 начать персональный разбор":
+        save_user_to_supabase(chat_id)
+        
         answer = (
             "Отлично, давайте познакомимся 🌿\n\n"
             "Ответьте, пожалуйста, одним сообщением:\n\n"
