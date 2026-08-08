@@ -264,29 +264,29 @@ def telegram_webhook():
         }
         
     elif normalized_text == "📝 начать персональный разбор":
-    save_user_to_supabase(chat_id)
+        save_user_to_supabase(chat_id)
 
-    update_user_in_supabase(
-        chat_id,
-        {
-            "stage": 1,
-            "age": None,
-            "height": None,
-            "weight": None,
-            "goal": None,
-            "activity": None,
-            "difficulty": None,
-            "restrictions": None,
-        },
-    )
+        update_user_in_supabase(
+            chat_id,
+            {
+                "stage": 1,
+                "age": None,
+                "height": None,
+                "weight": None,
+                "goal": None,
+                "activity": None,
+                "difficulty": None,
+                "restrictions": None,
+            },
+        )
 
-    answer = (
-        "Отлично, давайте познакомимся 🌿\n\n"
-        "Я задам несколько коротких вопросов по одному. "
-        "Ваши ответы помогут сделать разбор персональным.\n\n"
-        "Первый вопрос:\n"
-        "Сколько Вам лет?"
-    )
+        answer = (
+            "Отлично, давайте познакомимся 🌿\n\n"
+            "Я задам несколько коротких вопросов по одному. "
+            "Ваши ответы помогут сделать разбор персональным.\n\n"
+            "Первый вопрос:\n"
+            "Сколько Вам лет?"
+        )
 
     elif normalized_text in {
         "👩‍💼 получить консультацию",
