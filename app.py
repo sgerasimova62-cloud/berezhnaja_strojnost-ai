@@ -330,22 +330,22 @@ def telegram_webhook():
             )
 
     else:
-    try:
-        questionnaire_answer = process_questionnaire_answer(
-            chat_id,
-            user_text,
-        )
+        try:
+            questionnaire_answer = process_questionnaire_answer(
+                chat_id,
+                user_text,
+           )
 
-        if questionnaire_answer is not None:
-            answer = questionnaire_answer
-        else:
-            answer = get_ai_answer(user_text)
+            if questionnaire_answer is not None:
+                answer = questionnaire_answer
+            else:
+                answer = get_ai_answer(user_text)
 
-    except Exception:
-        answer = (
-            "Сейчас я не смогла обработать сообщение.\n"
-            "Попробуйте написать ещё раз чуть позже 🌿"
-        )
+        except Exception:
+            answer = (
+                "Сейчас я не смогла обработать сообщение.\n"
+                "Попробуйте написать ещё раз чуть позже 🌿"
+            )
 
     send_telegram_message(
         chat_id,
