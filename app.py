@@ -451,7 +451,7 @@ def telegram_webhook():
     # -------------------------
 
     if user_text.startswith("/start"):
-                if user:
+        if user:
             update_user_in_supabase(
                 chat_id,
                 {"dialog_state": None},
