@@ -443,11 +443,19 @@ def telegram_webhook():
     normalized_text = user_text.lower()
     reply_markup = None
 
+    user = get_user_from_supabase(chat_id)
+    dialog_state = user.get("dialog_state") if user else None
+
     # -------------------------
     # START
     # -------------------------
 
     if user_text.startswith("/start"):
+                if user:
+            update_user_in_supabase(
+                chat_id,
+                {"dialog_state": None},
+            )
         answer = (
             "Здравствуйте! 🌿\n\n"
             "Я — AI-проводник проекта «Бережная стройность».\n"
@@ -484,6 +492,7 @@ def telegram_webhook():
                     "activity": None,
                     "difficulty": None,
                     "restrictions": None,
+                    "dialog_state": None,
                 },
             )
 
@@ -534,11 +543,18 @@ def telegram_webhook():
                 "Пожалуйста, напишите немного позже."
             )
 
-    # -------------------------
+    # ------------------------
     # MARATHON
-    # -------------------------
+    # ------------------------
 
     elif normalized_text == "🌿 узнать о марафоне стройности":
+        create_user_in_supabase(chat_id)
+
+        update_user_in_supabase(
+            chat_id,
+            {"dialog_state": "marathon_intro"},
+        )
+
         answer = (
             "🌿 Как проходит Марафон стройности?\n\n"
             "Это не жёсткая диета и не история про силу воли. "
@@ -557,7 +573,25 @@ def telegram_webhook():
             "one_time_keyboard": False,
         }
 
-    elif normalized_text == "🥗 показать день участника":
+    elif (
+        normalized_text == "🥗 показать день участника"
+        or (
+            dialog_state == "marathon_intro"
+            and normalized_text in {
+                "да",
+                "покажи",
+                "покажите",
+                "да, покажи",
+                "да покажи",
+                "расскажи",
+            }
+        )
+    ):
+        update_user_in_supabase(
+            chat_id,
+            {"dialog_state": "marathon_day"},
+        )
+
         answer = (
             "🥗 Как выглядит день участника\n\n"
             "🌅 Завтрак — сбалансированный, с достаточным "
@@ -580,7 +614,25 @@ def telegram_webhook():
             "one_time_keyboard": False,
         }
 
-    elif normalized_text == "➡️ что ещё входит":
+    elif (
+        normalized_text == "➡️ что ещё входит"
+        or (
+            dialog_state == "marathon_day"
+            and normalized_text in {
+                "да",
+                "расскажи",
+                "расскажите",
+                "что ещё",
+                "дальше",
+                "интересно",
+            }
+        )
+    ):
+        update_user_in_supabase(
+            chat_id,
+            {"dialog_state": "marathon_support"},
+        )
+
         answer = (
             "❤️ Самая важная часть Марафона — сопровождение.\n\n"
             "👩‍💼 Личный консультант помогает разобраться "
@@ -604,6 +656,42 @@ def telegram_webhook():
             "resize_keyboard": True,
             "one_time_keyboard": False,
         }
+
+    elif (
+        dialog_state == "marathon_support"
+        and normalized_text in {
+            "да",
+            "хочу",
+            "да, хочу",
+            "да хочу",
+            "хочу обсудить",
+            "подойдёт",
+        }
+    ):
+        update_user_in_supabase(
+            chat_id,
+            {"dialog_state": "consultation"},
+        )
+
+        consultation_link = os.getenv(
+            "CONSULTATION_LINK",
+            "",
+        ).strip()
+
+        if consultation_link:
+            answer = (
+                "Конечно 🌿\n\n"
+                "В Вашей ситуации лучше обсудить детали лично "
+                "с консультантом проекта.\n\n"
+                "Перейдите по ссылке и кратко напишите свою цель:\n\n"
+                f"{consultation_link}"
+            )
+        else:
+            answer = (
+                "Конечно 🌿\n\n"
+                "Я готова передать Вас консультанту, "
+                "но ссылка на личную консультацию пока не настроена."
+            )
 
     # -------------------------
     # QUESTIONNAIRE / AI
